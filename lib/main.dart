@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tra_helper/config/constants.dart';
-import 'package:tra_helper/config/palette.dart';
 
-import 'screens/home_page.dart';
+import '/config/constants.dart';
+import '/config/palette.dart';
+import '/screens/main_frame.dart';
 
 void main() {
   runApp(const TraHelperApp());
@@ -32,7 +32,7 @@ class TraHelperApp extends StatelessWidget {
           thickness: 1,
         ),
       ),
-      home: const HomePage(),
+      home: MainFrame(),
     );
   }
 }
