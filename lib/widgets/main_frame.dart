@@ -7,7 +7,7 @@ import '/screens/schedule_search_page.dart';
 import '/screens/my_tickets_page.dart';
 import '/screens/explore_page.dart';
 
-const bool easymode = false; // 暫時變數，簡易模式即為true
+const bool easymode = true; // 暫時變數，簡易模式即為true
 const bool loginStatus = true; // 暫時變數，有登入即為true
 
 class MainFrame extends StatefulWidget {

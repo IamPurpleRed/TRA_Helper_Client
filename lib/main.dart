@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '/config/constants.dart';
 import '/config/palette.dart';
-import '/screens/main_frame.dart';
+import '/widgets/main_frame.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]); // 鎖定螢幕方向只能為垂直(網頁版不會鎖定)
   runApp(const TraHelperApp());
 }
 
