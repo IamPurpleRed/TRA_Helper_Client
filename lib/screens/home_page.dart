@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '/config/constants.dart';
 import '/config/palette.dart';
 
-const double blockTitleSize = 20.0;
-const double blockContentSize = 16.0;
-const double blockPadding = 16.0;
+const double blockTitleSize = 18.0;
+const double blockContentSize = 14.0;
+const double blockPadding = 12.0;
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final vw = MediaQuery.of(context).size.width;
-    final vh = MediaQuery.of(context).size.height;
+    final double vw = MediaQuery.of(context).size.width;
+    final double vh = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: vw * 0.05,
-        vertical: vh * 0.03,
+        vertical: vh * 0.02,
       ),
       child: StaggeredGrid.count(
         crossAxisCount: 50,
@@ -57,7 +58,7 @@ class HomePage extends StatelessWidget {
           // INFO: 導航block
           StaggeredGridTile.count(
             crossAxisCellCount: 25,
-            mainAxisCellCount: 12,
+            mainAxisCellCount: (vh > Constants.smallDeviceHeight) ? 12 : 10,
             child: Container(
               child: Row(
                 children: const [
@@ -79,7 +80,7 @@ class HomePage extends StatelessWidget {
           // INFO: 服務鈴block
           StaggeredGridTile.count(
             crossAxisCellCount: 25,
-            mainAxisCellCount: 12,
+            mainAxisCellCount: (vh > Constants.smallDeviceHeight) ? 12 : 10,
             child: Container(
               child: Row(
                 children: const [
@@ -101,7 +102,7 @@ class HomePage extends StatelessWidget {
           // INFO: 今日行程block
           StaggeredGridTile.count(
             crossAxisCellCount: 50,
-            mainAxisCellCount: 20,
+            mainAxisCellCount: 22,
             child: Container(
               child: const ScheduleToday(),
               decoration: blockDeco(),
@@ -111,7 +112,7 @@ class HomePage extends StatelessWidget {
           // INFO: 近期路線block
           StaggeredGridTile.count(
             crossAxisCellCount: 50,
-            mainAxisCellCount: 40,
+            mainAxisCellCount: (vh > Constants.smallDeviceHeight) ? 38 : 28,
             child: Container(
               child: const RecentActivity(),
               decoration: blockDeco(),
@@ -165,60 +166,62 @@ class _ScheduleTodayState extends State<ScheduleToday> {
             ],
           ),
           const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text('訂票代碼：4853731', style: TextStyle(fontSize: blockContentSize)),
-                  Text('自強 301', style: TextStyle(fontSize: blockContentSize)),
-                  Text('06:57 新左營 -> 09:17 臺東', style: TextStyle(fontSize: blockContentSize)),
-                ],
-              ),
-              Column(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 25,
-                    child: const Center(
-                      child: Text(
-                        '尚未取票',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: blockContentSize,
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('訂票代碼：4853731', style: TextStyle(fontSize: blockContentSize)),
+                    Text('自強 301', style: TextStyle(fontSize: blockContentSize)),
+                    Text('06:57 新左營 → 09:17 臺東', style: TextStyle(fontSize: blockContentSize)),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: 90,
+                      height: 24,
+                      child: const Center(
+                        child: Text(
+                          '尚未取票',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: blockContentSize,
+                          ),
                         ),
                       ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    width: 100,
-                    height: 25,
-                    child: const Center(
-                      child: Text(
-                        '12小時29分',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: blockContentSize,
-                        ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
+                    Container(
+                      width: 90,
+                      height: 24,
+                      child: const Center(
+                        child: Text(
+                          '12小時29分',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: blockContentSize,
+                          ),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),
@@ -227,9 +230,9 @@ class _ScheduleTodayState extends State<ScheduleToday> {
 }
 
 class RecentActivity extends StatefulWidget {
-  const RecentActivity({
-    Key? key,
-  }) : super(key: key);
+  const RecentActivity({Key? key}) : super(key: key);
+
+  static const double starIconSize = 20.0;
 
   @override
   State<RecentActivity> createState() => _RecentActivityState();
@@ -238,6 +241,9 @@ class RecentActivity extends StatefulWidget {
 class _RecentActivityState extends State<RecentActivity> {
   @override
   Widget build(BuildContext context) {
+    final double vw = MediaQuery.of(context).size.width;
+    final double vh = MediaQuery.of(context).size.height;
+
     return Padding(
       padding: const EdgeInsets.all(blockPadding),
       child: Column(
@@ -264,45 +270,44 @@ class _RecentActivityState extends State<RecentActivity> {
             child: ListView(
               children: [
                 ListTile(
-                  leading: const Text('自強 300', style: TextStyle(fontSize: blockContentSize)),
-                  title: const Text('新左營 -> 斗六', style: TextStyle(fontSize: blockContentSize)),
+                  leading: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [Text('自強 300', style: TextStyle(fontSize: blockContentSize))],
+                  ),
+                  minLeadingWidth: 75,
+                  title: const Text('新左營 → 斗六', style: TextStyle(fontSize: blockContentSize)),
+                  subtitle: const Text('08:43~10:24'),
                   trailing: InkWell(
-                    child: Icon(Icons.star, color: Colors.yellow[600]),
+                    child: Icon(
+                      Icons.star,
+                      color: Colors.yellow[600],
+                      size: RecentActivity.starIconSize,
+                    ),
                     onTap: () {},
                   ),
-                  minLeadingWidth: 10,
+                  dense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  visualDensity: VisualDensity(vertical: (vh > Constants.smallDeviceHeight) ? -2 : -4),
                 ),
                 ListTile(
-                  leading: const Text('莒光 4000', style: TextStyle(fontSize: blockContentSize)),
-                  title: const Text('高雄 -> 台南', style: TextStyle(fontSize: blockContentSize)),
+                  leading: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [Text('莒光 4000', style: TextStyle(fontSize: blockContentSize))],
+                  ),
+                  minLeadingWidth: 75,
+                  title: const Text('高雄 → 台南', style: TextStyle(fontSize: blockContentSize)),
+                  subtitle: const Text('14:23~15:59'),
                   trailing: InkWell(
-                    child: const Icon(Icons.star, color: Palette.backgroundColor),
+                    child: const Icon(
+                      Icons.star,
+                      color: Palette.backgroundColor,
+                      size: RecentActivity.starIconSize,
+                    ),
                     onTap: () {},
                   ),
-                ),
-                ListTile(
-                  leading: const Text('莒光 4000', style: TextStyle(fontSize: blockContentSize)),
-                  title: const Text('高雄 -> 台南', style: TextStyle(fontSize: blockContentSize)),
-                  trailing: InkWell(
-                    child: const Icon(Icons.star, color: Palette.backgroundColor),
-                    onTap: () {},
-                  ),
-                ),
-                ListTile(
-                  leading: const Text('莒光 4000', style: TextStyle(fontSize: blockContentSize)),
-                  title: const Text('高雄 -> 台南', style: TextStyle(fontSize: blockContentSize)),
-                  trailing: InkWell(
-                    child: const Icon(Icons.star, color: Palette.backgroundColor),
-                    onTap: () {},
-                  ),
-                ),
-                ListTile(
-                  leading: const Text('莒光 4000', style: TextStyle(fontSize: blockContentSize)),
-                  title: const Text('高雄 -> 台南', style: TextStyle(fontSize: blockContentSize)),
-                  trailing: InkWell(
-                    child: const Icon(Icons.star, color: Palette.backgroundColor),
-                    onTap: () {},
-                  ),
+                  dense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  visualDensity: VisualDensity(vertical: (vh > Constants.smallDeviceHeight) ? -2 : -4),
                 ),
               ],
             ),

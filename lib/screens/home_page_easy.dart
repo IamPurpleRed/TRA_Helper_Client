@@ -18,8 +18,8 @@ class _HomePageEasyState extends State<HomePageEasy> {
 
   @override
   Widget build(BuildContext context) {
-    final vw = MediaQuery.of(context).size.width;
-    final vh = MediaQuery.of(context).size.height;
+    final double vw = MediaQuery.of(context).size.width;
+    final double vh = MediaQuery.of(context).size.height;
 
     return Stack(
       children: [

@@ -7,7 +7,7 @@ import '/screens/schedule_search_page.dart';
 import '/screens/my_tickets_page.dart';
 import '/screens/explore_page.dart';
 
-const bool easymode = true; // 暫時變數，簡易模式即為true
+const bool easymode = false; // 暫時變數，簡易模式即為true
 const bool loginStatus = true; // 暫時變數，有登入即為true
 
 class MainFrame extends StatefulWidget {
@@ -15,16 +15,22 @@ class MainFrame extends StatefulWidget {
 
   final List<Widget> _pages = [
     if (easymode) HomePageEasy(),
-    if (!easymode) HomePage(),
-    ScheduleSearchPage(),
-    MyTicketsPage(),
-    ExplorePage(),
+    if (!easymode) const HomePage(),
+    const ScheduleSearchPage(),
+    const MyTicketsPage(),
+    const ExplorePage(),
   ];
   static const List<String> _pageTitles = [
     '台鐵幫幫盲',
     '班次查詢',
     '我的票匣',
     '探索',
+  ];
+  static const List<IconData> _pageIcons = [
+    Icons.home,
+    Icons.schedule,
+    Icons.confirmation_number,
+    Icons.location_on,
   ];
 
   @override
@@ -36,8 +42,8 @@ class _MainFrameState extends State<MainFrame> {
 
   @override
   Widget build(BuildContext context) {
-    final vw = MediaQuery.of(context).size.width;
-    final vh = MediaQuery.of(context).size.height;
+    final double vw = MediaQuery.of(context).size.width;
+    final double vh = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Palette.backgroundColor,
@@ -49,7 +55,7 @@ class _MainFrameState extends State<MainFrame> {
           Padding(
             padding: EdgeInsets.all(12),
             child: Center(
-              child: loginStatus ? Text('登入', style: TextStyle(fontSize: 20)) : Icon(Icons.account_circle),
+              child: loginStatus ? Text('登入', style: TextStyle(fontSize: 18)) : Icon(Icons.account_circle),
             ),
           ),
         ],
@@ -82,54 +88,8 @@ class _MainFrameState extends State<MainFrame> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    SizedBox(
-                      width: vw * 0.15,
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.home,
-                              color: (currentPageIndex == 0) ? Palette.secondaryColor : Colors.white,
-                            ),
-                            Text(
-                              '首頁',
-                              style: TextStyle(
-                                color: (currentPageIndex == 0) ? Palette.secondaryColor : Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          setState(() => currentPageIndex = 0);
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: vw * 0.15,
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.schedule,
-                              color: (currentPageIndex == 1) ? Palette.secondaryColor : Colors.white,
-                            ),
-                            Text(
-                              MainFrame._pageTitles[1],
-                              style: TextStyle(
-                                color: (currentPageIndex == 1) ? Palette.secondaryColor : Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          setState(() => currentPageIndex = 1);
-                        },
-                      ),
-                    ),
+                    bottomAppBarItem(vw, 0, '首頁'),
+                    bottomAppBarItem(vw, 1, MainFrame._pageTitles[1]),
                   ],
                 ),
               ),
@@ -138,60 +98,42 @@ class _MainFrameState extends State<MainFrame> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    SizedBox(
-                      width: vw * 0.15,
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.confirmation_number,
-                              color: (currentPageIndex == 2) ? Palette.secondaryColor : Colors.white,
-                            ),
-                            Text(
-                              MainFrame._pageTitles[2],
-                              style: TextStyle(
-                                color: (currentPageIndex == 2) ? Palette.secondaryColor : Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          setState(() => currentPageIndex = 2);
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: vw * 0.15,
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: (currentPageIndex == 3) ? Palette.secondaryColor : Colors.white,
-                            ),
-                            Text(
-                              MainFrame._pageTitles[3],
-                              style: TextStyle(
-                                color: (currentPageIndex == 3) ? Palette.secondaryColor : Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          setState(() => currentPageIndex = 3);
-                        },
-                      ),
-                    ),
+                    bottomAppBarItem(vw, 2, MainFrame._pageTitles[2]),
+                    bottomAppBarItem(vw, 3, MainFrame._pageTitles[3]),
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  SizedBox bottomAppBarItem(double vw, int index, String text) {
+    return SizedBox(
+      width: vw * 0.15,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              MainFrame._pageIcons[index],
+              color: (currentPageIndex == index) ? Palette.secondaryColor : Colors.white,
+            ),
+            Text(
+              text,
+              style: TextStyle(
+                color: (currentPageIndex == index) ? Palette.secondaryColor : Colors.white,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          setState(() => currentPageIndex = index);
+        },
       ),
     );
   }

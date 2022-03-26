@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '/config/constants.dart';
 import '/config/palette.dart';
@@ -13,6 +14,7 @@ class TraHelperApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Wakelock.enable();
     return MaterialApp(
       title: '台鐵幫幫盲',
       debugShowCheckedModeBanner: true,
