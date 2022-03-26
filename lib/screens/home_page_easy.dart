@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:tra_helper/config/palette.dart';
 
-class HomePageEasy extends StatelessWidget {
-  const HomePageEasy({Key? key}) : super(key: key);
+import '/config/palette.dart';
+import '/widgets/speech_to_text.dart';
 
-  static const bool hasResult = false; // 暫時變數，若沒有回覆訊息則為false
+class HomePageEasy extends StatefulWidget {
+  HomePageEasy({Key? key}) : super(key: key);
+
+  final speechToTextKey = GlobalKey<SpeechToTextState>();
+  static const Duration animateTime = Duration(milliseconds: 200);
+
+  @override
+  State<HomePageEasy> createState() => _HomePageEasyState();
+}
+
+class _HomePageEasyState extends State<HomePageEasy> {
+  bool hasResult = false; // 若沒有回覆訊息則為false，將會影響排版
 
   @override
   Widget build(BuildContext context) {
@@ -31,30 +41,41 @@ class HomePageEasy extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: hasResult ? vh * 0.03 : vh * 0.1),
-              Text('您現在位於 新左營車站', style: TextStyle(fontSize: 24)),
-              SizedBox(height: vh * 0.03),
-              // INFO: Result預留空間
-              // SizedBox(
-              //   height: vh * 0.3,
-              //   child: Container(),
-              // ),
+              AnimatedContainer(
+                duration: HomePageEasy.animateTime,
+                height: hasResult ? vh * 0.03 : vh * 0.1,
+              ),
+              const Text(
+                '您現在位於 新左營車站',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: vh * 0.06),
+              AnimatedContainer(
+                duration: HomePageEasy.animateTime,
+                height: hasResult ? vh * 0.3 : 0,
+                child: SpeechToText(key: widget.speechToTextKey),
+              ),
             ],
           ),
         ),
+
+        // INFO: 偵測區域
         SizedBox(
           width: vw,
           height: hasResult ? vh * 0.4 : vh * 0.5,
           child: GestureDetector(
-            onTap: (() {
-              print('tap');
-            }),
+            onTap: (() => print('tap')),
             onLongPress: (() {
-              print('long press');
+              widget.speechToTextKey.currentState!.resultString = '';
+              widget.speechToTextKey.currentState!.startListening();
+              setState(() {
+                hasResult = true;
+              });
             }),
-            onLongPressUp: (() {
-              print('long press up');
-            }),
+            onLongPressUp: (() => widget.speechToTextKey.currentState!.stopListening()),
           ),
         ),
       ],

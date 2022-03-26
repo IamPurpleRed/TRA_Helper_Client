@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
 
-          // INFO: 列車提醒block
+          // INFO: 今日行程block
           StaggeredGridTile.count(
             crossAxisCellCount: 50,
             mainAxisCellCount: 20,

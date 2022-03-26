@@ -13,17 +13,17 @@ const bool loginStatus = true; // 暫時變數，有登入即為true
 class MainFrame extends StatefulWidget {
   MainFrame({Key? key}) : super(key: key);
 
-  final List<Widget> pages = [
+  final List<Widget> _pages = [
     if (easymode) HomePageEasy(),
     if (!easymode) HomePage(),
     ScheduleSearchPage(),
     MyTicketsPage(),
     ExplorePage(),
   ];
-  final List<String> pageTitles = [
+  static const List<String> _pageTitles = [
     '台鐵幫幫盲',
     '班次查詢',
-    '我的票匝',
+    '我的票匣',
     '探索',
   ];
 
@@ -43,7 +43,7 @@ class _MainFrameState extends State<MainFrame> {
       backgroundColor: Palette.backgroundColor,
       appBar: AppBar(
         backgroundColor: Palette.primaryColor,
-        title: Text(widget.pageTitles[currentPageIndex]),
+        title: Text(MainFrame._pageTitles[currentPageIndex]),
         centerTitle: true,
         actions: const [
           Padding(
@@ -54,7 +54,7 @@ class _MainFrameState extends State<MainFrame> {
           ),
         ],
       ),
-      body: widget.pages[currentPageIndex],
+      body: widget._pages[currentPageIndex],
       floatingActionButton: SizedBox(
         width: vw * 0.18,
         height: vh * 0.18,
@@ -118,7 +118,7 @@ class _MainFrameState extends State<MainFrame> {
                               color: (currentPageIndex == 1) ? Palette.secondaryColor : Colors.white,
                             ),
                             Text(
-                              '班次查詢',
+                              MainFrame._pageTitles[1],
                               style: TextStyle(
                                 color: (currentPageIndex == 1) ? Palette.secondaryColor : Colors.white,
                               ),
@@ -150,7 +150,7 @@ class _MainFrameState extends State<MainFrame> {
                               color: (currentPageIndex == 2) ? Palette.secondaryColor : Colors.white,
                             ),
                             Text(
-                              '我的票匝',
+                              MainFrame._pageTitles[2],
                               style: TextStyle(
                                 color: (currentPageIndex == 2) ? Palette.secondaryColor : Colors.white,
                               ),
@@ -174,7 +174,7 @@ class _MainFrameState extends State<MainFrame> {
                               color: (currentPageIndex == 3) ? Palette.secondaryColor : Colors.white,
                             ),
                             Text(
-                              '探索',
+                              MainFrame._pageTitles[3],
                               style: TextStyle(
                                 color: (currentPageIndex == 3) ? Palette.secondaryColor : Colors.white,
                               ),
