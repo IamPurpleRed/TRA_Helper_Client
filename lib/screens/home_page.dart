@@ -127,7 +127,7 @@ class HomePage extends StatelessWidget {
   BoxDecoration blockDeco() {
     return BoxDecoration(
       color: Palette.primaryColor,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10.0),
     );
   }
 }

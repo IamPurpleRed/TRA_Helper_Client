@@ -11,7 +11,7 @@
         </intent>
     </queries>
    <application
-        android:label="tra_helper"
+        android:label="台鐵幫幫盲"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

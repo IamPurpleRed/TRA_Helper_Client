@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tra_helper/screens/login_page.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '/config/constants.dart';
@@ -40,7 +41,7 @@ class TraHelperApp extends StatelessWidget {
           thickness: 1,
         ),
       ),
-      home: MainFrame(),
+      home: LoginPage(),
     );
   }
 }

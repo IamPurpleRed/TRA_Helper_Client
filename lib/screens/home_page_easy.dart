@@ -34,18 +34,19 @@ class _HomePageEasyState extends State<HomePageEasy> {
                 width: vw * 0.65,
                 height: vw * 0.65,
                 child: AvatarGlow(
-                    animate: isPressing,
-                    endRadius: 150.0,
-                    duration: const Duration(seconds: 1),
-                    child: const CircleAvatar(
-                      radius: 100.0,
-                      backgroundColor: Palette.secondaryColor,
-                      child: Icon(
-                        Icons.mic,
-                        size: 120,
-                        color: Colors.white,
-                      ),
-                    )),
+                  animate: isPressing,
+                  endRadius: 150.0,
+                  duration: const Duration(seconds: 1),
+                  child: const CircleAvatar(
+                    radius: 100.0,
+                    backgroundColor: Palette.secondaryColor,
+                    child: Icon(
+                      Icons.mic,
+                      size: 120,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
               AnimatedContainer(
                 duration: HomePageEasy.animateTime,
