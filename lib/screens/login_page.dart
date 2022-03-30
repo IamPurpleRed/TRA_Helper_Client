@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '/config/palette.dart';
@@ -30,68 +32,84 @@ class _LoginPageState extends State<LoginPage> {
     final double vw = MediaQuery.of(context).size.width;
     final double vh = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Palette.backgroundColor,
-      body: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 20.0,
-            child: Text(
-              'version: ${packageInfo.version}',
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: vw * 0.35,
-                height: vw * 0.35,
-                child: Image.asset('assets/logo_white.png'),
-              ),
-              const SizedBox(height: 20.0),
-              AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                width: vw - 40,
-                height: (selectedTitle == '註 冊') ? 400.0 : 300.0,
-                margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                decoration: BoxDecoration(
-                  color: Palette.primaryColor,
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()), // 點擊螢幕任一處以轉移焦點
+      child: Scaffold(
+        backgroundColor: Palette.backgroundColor,
+        //resizeToAvoidBottomInset: false,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: vw * 0.35,
+                    height: vw * 0.35,
+                    child: Image.asset('assets/logo_white.png'),
+                  ),
+                  const SizedBox(height: 20.0),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    width: vw - 40,
+                    height: (selectedTitle == '註 冊' && MediaQuery.of(context).viewInsets.bottom <= 0.0) ? 400.0 : 300.0,
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    decoration: BoxDecoration(
+                      color: Palette.primaryColor,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Column(
                         children: [
-                          titleSelector('登 入'),
-                          titleSelector('註 冊'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              titleSelector('登 入'),
+                              titleSelector('註 冊'),
+                            ],
+                          ),
+                          const SizedBox(height: 20.0),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                children: [
+                                  if (selectedTitle == '註 冊')
+                                    Row(
+                                      children: [
+                                        // NOTE: TextField 外面要包 Expanded 才能使其在同一列
+                                        Expanded(child: textfield(const Icon(Icons.abc), '姓', TextInputType.text)),
+                                        Expanded(child: textfield(const Icon(Icons.abc), '名', TextInputType.text)),
+                                      ],
+                                    ),
+                                  textfield(const Icon(Icons.account_circle), '身分證字號', TextInputType.visiblePassword),
+                                  textfield(const Icon(Icons.vpn_key), '密碼', TextInputType.visiblePassword),
+                                  if (selectedTitle == '註 冊') textfield(const Icon(Icons.phone_android), '手機號碼', TextInputType.phone),
+                                  submitButton(),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      SizedBox(height: 20.0),
-                      (selectedTitle == '註 冊')
-                          ? Row(
-                              children: [
-                                // Note: TextField 外面要包 Expanded 才能使其在同一列
-                                Expanded(child: textfield(Icon(Icons.abc), '姓')),
-                                Expanded(child: textfield(Icon(Icons.abc), '名')),
-                              ],
-                            )
-                          : const SizedBox(height: 0),
-                      textfield(Icon(Icons.account_circle), '身分證字號'),
-                      textfield(Icon(Icons.vpn_key), '密碼'),
-                      (selectedTitle == '註 冊') ? textfield(Icon(Icons.phone_android), '手機號碼') : const SizedBox(height: 0),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          )
-        ],
+            ),
+
+            // INFO: 版本號
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Text(
+                'version: ${packageInfo.version}',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -101,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () => setState(() {
         selectedTitle = title;
+        FocusScope.of(context).requestFocus(FocusNode());
       }),
       child: Column(
         children: [
@@ -115,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             width: 55.0,
             height: 3.0,
-            margin: EdgeInsets.only(top: 5.0),
+            margin: const EdgeInsets.only(top: 5.0),
             color: (selectedTitle == title) ? Palette.secondaryColor : Colors.transparent,
           ),
         ],
@@ -124,26 +143,48 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // INFO: 輸入格
-  Padding textfield(Icon prefixIcon, String fieldName) {
+  Padding textfield(Icon prefixIcon, String fieldName, TextInputType keyboardType) {
     const double fontSize = 18.0;
-    Color enabledColor = Colors.grey[300]!;
 
     return Padding(
       padding: const EdgeInsets.all(6.0),
       child: TextField(
-        style: TextStyle(fontSize: fontSize),
+        keyboardType: keyboardType,
+        obscureText: (fieldName == '密碼') ? true : false,
+        style: const TextStyle(fontSize: fontSize),
         decoration: InputDecoration(
           hintText: fieldName,
-          hintStyle: TextStyle(color: enabledColor, fontSize: fontSize),
-          contentPadding: EdgeInsets.all(10.0),
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: fontSize),
+          contentPadding: const EdgeInsets.all(6.0),
           prefixIcon: prefixIcon,
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: enabledColor),
+            borderSide: BorderSide(color: Colors.grey[300]!),
             borderRadius: BorderRadius.circular(35.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Palette.secondaryColor),
+            borderSide: const BorderSide(color: Palette.secondaryColor),
             borderRadius: BorderRadius.circular(35.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // INFO: 按鈕
+  GestureDetector submitButton() {
+    return GestureDetector(
+      onTap: () {},
+      child: AvatarGlow(
+        animate: true,
+        endRadius: 45.0,
+        duration: const Duration(seconds: 3),
+        repeatPauseDuration: const Duration(seconds: 3),
+        child: const CircleAvatar(
+          radius: 30.0,
+          backgroundColor: Palette.secondaryColor,
+          child: Icon(
+            Icons.arrow_forward,
+            color: Colors.white,
           ),
         ),
       ),
