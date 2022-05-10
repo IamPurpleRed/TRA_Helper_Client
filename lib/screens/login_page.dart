@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:dio/dio.dart';
 
 import '/config/palette.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+
+  final usernameController = TextEditingController();
+  final pwdController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final phoneController = TextEditingController();
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -36,7 +42,6 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()), // 點擊螢幕任一處以轉移焦點
       child: Scaffold(
         backgroundColor: Palette.backgroundColor,
-        //resizeToAvoidBottomInset: false,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -44,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  /* INFO: Logo */
                   SizedBox(
                     width: vw * 0.35,
                     height: vw * 0.35,
@@ -51,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 20.0),
                   AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 200),
                     width: vw - 40,
                     height: (selectedTitle == '註 冊' && MediaQuery.of(context).viewInsets.bottom <= 0.0) ? 400.0 : 300.0,
                     margin: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -71,27 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
                           const SizedBox(height: 20.0),
-                          Expanded(
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                children: [
-                                  if (selectedTitle == '註 冊')
-                                    Row(
-                                      children: [
-                                        // NOTE: TextField 外面要包 Expanded 才能使其在同一列
-                                        Expanded(child: textfield(const Icon(Icons.abc), '姓', TextInputType.text)),
-                                        Expanded(child: textfield(const Icon(Icons.abc), '名', TextInputType.text)),
-                                      ],
-                                    ),
-                                  textfield(const Icon(Icons.account_circle), '身分證字號', TextInputType.visiblePassword),
-                                  textfield(const Icon(Icons.vpn_key), '密碼', TextInputType.visiblePassword),
-                                  if (selectedTitle == '註 冊') textfield(const Icon(Icons.phone_android), '手機號碼', TextInputType.phone),
-                                  submitButton(),
-                                ],
-                              ),
-                            ),
-                          ),
+                          Expanded(child: formBody()),
                         ],
                       ),
                     ),
@@ -100,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            // INFO: 版本號
+            /* INFO: 版本號 */
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
@@ -114,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // INFO: 標題選擇 (登入 & 註冊)
+  /* INFO: 標題選擇 (登入 & 註冊) */
   GestureDetector titleSelector(String title) {
     return GestureDetector(
       onTap: () => setState(() {
@@ -142,8 +128,64 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // INFO: 輸入格
-  Padding textfield(Icon prefixIcon, String fieldName, TextInputType keyboardType) {
+  /* INFO: 表單內容 */
+  SingleChildScrollView formBody() {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          if (selectedTitle == '註 冊')
+            /* INFO: 姓名欄位 (註冊專用) */
+            Row(
+              children: [
+                // NOTE: TextField 外面要包 Expanded 才能使其在同一列
+                Expanded(
+                  child: textfield(
+                    prefixIcon: const Icon(Icons.abc),
+                    fieldName: '姓',
+                    controller: widget.lastNameController,
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+                Expanded(
+                  child: textfield(
+                    prefixIcon: const Icon(Icons.abc),
+                    fieldName: '名',
+                    controller: widget.firstNameController,
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+              ],
+            ),
+
+          /* INFO: 手機欄位 (註冊專用) */
+          if (selectedTitle == '註 冊')
+            textfield(
+              prefixIcon: const Icon(Icons.phone_android),
+              fieldName: '手機號碼',
+              controller: widget.phoneController,
+              keyboardType: TextInputType.phone,
+            ),
+          textfield(
+            prefixIcon: const Icon(Icons.account_circle),
+            fieldName: '身分證字號 (請使用英文大寫)',
+            controller: widget.usernameController,
+            keyboardType: TextInputType.visiblePassword,
+          ),
+          textfield(
+            prefixIcon: const Icon(Icons.vpn_key),
+            fieldName: '密碼',
+            controller: widget.pwdController,
+            keyboardType: TextInputType.visiblePassword,
+          ),
+          submitButton(selectedTitle),
+        ],
+      ),
+    );
+  }
+
+  /* INFO: 輸入格 */
+  Padding textfield({required Icon prefixIcon, required String fieldName, required TextInputType keyboardType, required TextEditingController controller}) {
     const double fontSize = 18.0;
 
     return Padding(
@@ -170,16 +212,26 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // INFO: 按鈕
-  GestureDetector submitButton() {
+  /* INFO: 按鈕 */
+  GestureDetector submitButton(String selectedTitle) {
     return GestureDetector(
-      onTap: () {},
-      child: AvatarGlow(
+      onTap: () async {
+        // TODO: 按鈕顯示載入動畫
+
+        if (selectedTitle == '註 冊') {
+          bool status = await enrollTask();
+        } else {
+          await loginTask();
+        }
+
+        setState(() {});
+      },
+      child: const AvatarGlow(
         animate: true,
         endRadius: 45.0,
-        duration: const Duration(seconds: 3),
-        repeatPauseDuration: const Duration(seconds: 3),
-        child: const CircleAvatar(
+        duration: Duration(seconds: 3),
+        repeatPauseDuration: Duration(seconds: 3),
+        child: CircleAvatar(
           radius: 30.0,
           backgroundColor: Palette.secondaryColor,
           child: Icon(
@@ -189,5 +241,70 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  /* INFO: 登入 POST 函式 */
+  Future<bool> loginTask() async {
+    Response response;
+
+    try {
+      response = await Dio().post(
+        'https://tra-helper-backend.herokuapp.com/rest-auth/login/',
+        data: {'username': widget.usernameController, 'password': widget.pwdController},
+      );
+    } catch (e) {
+      errorDialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+      return false;
+    }
+
+    if (response.statusCode == 200) {
+      // TODO: 寫入資料到App
+      return true;
+    } else {
+      errorDialog(context, '發生錯誤', '您填入的資訊有誤'); // TODO: 擷取錯誤訊息並輸出
+      return false;
+    }
+  }
+
+  /* INFO: 註冊 POST 函式 */
+  Future<bool> enrollTask() async {
+    // Response response;
+
+    // try {
+    //   response = await Dio().post(
+    //     'https://tra-helper-backend.herokuapp.com/registration/tra-users/',
+    //     data: {
+    //       'username': widget.usernameController,
+    //       'password1': widget.pwdController,
+    //       'password2': widget.pwdController, // 不做確認密碼欄位
+    //       'email': '${widget.usernameController}@trahelper.com.tw', // 不做電子郵件欄位
+    //       'last_name': widget.lastNameController,
+    //       'first_name': widget.firstNameController,
+    //       'phone_number': widget.phoneController,
+    //       'is_visually_impaired': isVisuallyImpaired
+    //     },
+    //   );
+    // } catch (e) {
+    //   returnThisIfFail['log'] = e.toString();
+    //   return returnThisIfFail;
+    // }
+    return false;
+  }
+
+  /* INFO: 發生錯誤的提示方塊 */
+  void errorDialog(BuildContext context, String title, String content) {
+    AlertDialog dialog = AlertDialog(
+      title: Text(title),
+      content: Text(content),
+      scrollable: true,
+      actions: [
+        TextButton(
+          child: const Text('確認'),
+          onPressed: () => Navigator.pop(context),
+        )
+      ],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => dialog);
   }
 }

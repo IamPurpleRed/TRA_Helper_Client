@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tra_helper/screens/login_page.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '/config/constants.dart';
 import '/config/palette.dart';
+import '/screens/login_page.dart';
 import '/widgets/main_frame.dart';
 
 void main() async {
@@ -40,8 +40,13 @@ class TraHelperApp extends StatelessWidget {
           color: Palette.dividerColor,
           thickness: 1,
         ),
+        checkboxTheme: CheckboxThemeData(fillColor: MaterialStateProperty.all(Palette.secondaryColor)),
       ),
-      home: LoginPage(),
+      initialRoute: '/login',
+      routes: {
+        '/': (context) => MainFrame(),
+        '/login': (context) => LoginPage(),
+      },
     );
   }
 }

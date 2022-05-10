@@ -16,6 +16,7 @@ dependencies:
   dialog_flowtter: ^0.3.3 # dialogflow串接
   avatar_glow: ^2.0.2 # 語音按鈕漣漪動畫
   package_info_plus: ^1.4.0 # 取得版本號
+  dio: ^4.0.6 # HTTP Request
 
 dev_dependencies:
   flutter_test:

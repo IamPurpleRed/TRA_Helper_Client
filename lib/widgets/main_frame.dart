@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 
 import '/config/palette.dart';
 import '/screens/home_page.dart';
-import '/screens/home_page_easy.dart';
 import '/screens/schedule_search_page.dart';
 import '/screens/my_tickets_page.dart';
 import '/screens/explore_page.dart';
 
-const bool easymode = true; // 暫時變數，簡易模式即為true
 const bool loginStatus = true; // 暫時變數，有登入即為true
 
 class MainFrame extends StatefulWidget {
   MainFrame({Key? key}) : super(key: key);
 
   final List<Widget> _pages = [
-    if (easymode) HomePageEasy(),
-    if (!easymode) const HomePage(),
+    HomePage(),
     const ScheduleSearchPage(),
     const MyTicketsPage(),
     const ExplorePage(),
@@ -64,15 +61,10 @@ class _MainFrameState extends State<MainFrame> {
       floatingActionButton: SizedBox(
         width: vw * 0.18,
         height: vh * 0.18,
-        child: easymode
-            ? FloatingActionButton(
-                child: const Icon(Icons.notifications_active, size: 48),
-                onPressed: () {},
-              )
-            : FloatingActionButton(
-                child: const Icon(Icons.mic, size: 48),
-                onPressed: () {},
-              ),
+        child: FloatingActionButton(
+          child: const Icon(Icons.notifications_active, size: 48),
+          onPressed: () {},
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
