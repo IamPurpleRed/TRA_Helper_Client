@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dio/dio.dart';
 
@@ -20,7 +21,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   PackageInfo packageInfo = PackageInfo(appName: 'unknown', packageName: 'unknown', version: 'unknown', buildNumber: 'unknown');
-  String selectedTitle = '登 入';
+  String selectedTitle = '登 入'; // 目前使用者正在登入還是註冊 tab
+  bool isWorking = false; // 系統是否正在進行登入或註冊作業
 
   @override
   void initState() {
@@ -217,8 +219,8 @@ class _LoginPageState extends State<LoginPage> {
   GestureDetector submitButton(String selectedTitle) {
     return GestureDetector(
       onTap: () async {
+        setState(() => isWorking = true);
         bool status;
-        // TODO: 按鈕顯示載入動畫
 
         if (selectedTitle == '註 冊') {
           status = await enrollTask();
@@ -231,21 +233,23 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.pushReplacementNamed(context, '/home');
           });
         } else {
-          // TODO: 取消顯示載入動畫
+          setState(() => isWorking = true);
         }
       },
-      child: const AvatarGlow(
+      child: AvatarGlow(
         animate: true,
         endRadius: 45.0,
-        duration: Duration(seconds: 3),
-        repeatPauseDuration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
+        repeatPauseDuration: const Duration(seconds: 3),
         child: CircleAvatar(
           radius: 30.0,
           backgroundColor: Palette.secondaryColor,
-          child: Icon(
-            Icons.arrow_forward,
-            color: Colors.white,
-          ),
+          child: isWorking
+              ? const SpinKitThreeBounce(color: Colors.white, size: 18.0)
+              : const Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                ),
         ),
       ),
     );
@@ -262,9 +266,9 @@ class _LoginPageState extends State<LoginPage> {
       );
     } on DioError catch (e) {
       if (e.response != null) {
-        if (e.response!.statusCode == 400) errorDialog(context, '登入資訊錯誤', '您填入的帳號或密碼有誤');
+        if (e.response!.statusCode == 400) dialog(context, '登入資訊錯誤', '您填入的帳號或密碼有誤');
       } else {
-        errorDialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+        dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
       }
 
       return false;
@@ -275,31 +279,34 @@ class _LoginPageState extends State<LoginPage> {
 
   /* INFO: 註冊 POST 函式 */
   Future<bool> enrollTask() async {
-    // Response response;
+    Response response;
 
-    // try {
-    //   response = await Dio().post(
-    //     'https://tra-helper-backend.herokuapp.com/registration/tra-users/',
-    //     data: {
-    //       'username': widget.usernameController,
-    //       'password1': widget.pwdController,
-    //       'password2': widget.pwdController, // 不做確認密碼欄位
-    //       'email': '${widget.usernameController}@trahelper.com.tw', // 不做電子郵件欄位
-    //       'last_name': widget.lastNameController,
-    //       'first_name': widget.firstNameController,
-    //       'phone_number': widget.phoneController,
-    //       'is_visually_impaired': isVisuallyImpaired
-    //     },
-    //   );
-    // } catch (e) {
-    //   returnThisIfFail['log'] = e.toString();
-    //   return returnThisIfFail;
-    // }
-    return false;
+    try {
+      response = await Dio().post(
+        'https://tra-helper-backend.herokuapp.com/accounts/',
+        data: {
+          'last_name': widget.lastNameController.text,
+          'first_name': widget.firstNameController.text,
+          'identity_number': widget.usernameController.text,
+          'password': widget.pwdController.text,
+          'phone_number': widget.phoneController.text,
+        },
+      );
+    } on DioError catch (e) {
+      if (e.response != null) {
+        if (e.response!.statusCode == 400) dialog(context, '註冊資訊錯誤', '您填入的資訊不符合規範或是有漏填');
+      } else {
+        dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+      }
+
+      return false;
+    }
+
+    return true;
   }
 
-  /* INFO: 發生錯誤的提示方塊 */
-  void errorDialog(BuildContext context, String title, String content) {
+  /* INFO: 提示方塊 */
+  void dialog(BuildContext context, String title, String content) {
     AlertDialog dialog = AlertDialog(
       title: Text(title),
       content: Text(content),

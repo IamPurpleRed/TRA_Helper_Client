@@ -14,7 +14,8 @@ dependencies:
   speech_to_text: ^5.4.3 # 使用者語音輸入轉文字
   wakelock: ^0.6.1+2 # 保持螢幕喚醒
   dialog_flowtter: ^0.3.3 # dialogflow串接
-  avatar_glow: ^2.0.2 # 語音按鈕漣漪動畫
+  avatar_glow: ^2.0.2 # 按鈕漣漪動畫
+  flutter_spinkit: ^5.1.0 # 按鈕載入動畫
   package_info_plus: ^1.4.0 # 取得版本號
   dio: ^4.0.6 # HTTP Request
 
