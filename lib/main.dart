@@ -44,7 +44,7 @@ class TraHelperApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
-        '/': (context) => MainFrame(),
+        '/home': (context) => MainFrame(),
         '/login': (context) => LoginPage(),
       },
     );

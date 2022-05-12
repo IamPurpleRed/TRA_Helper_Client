@@ -191,6 +191,7 @@ class _LoginPageState extends State<LoginPage> {
     return Padding(
       padding: const EdgeInsets.all(6.0),
       child: TextField(
+        controller: controller,
         keyboardType: keyboardType,
         obscureText: (fieldName == '密碼') ? true : false,
         style: const TextStyle(fontSize: fontSize),
@@ -216,15 +217,22 @@ class _LoginPageState extends State<LoginPage> {
   GestureDetector submitButton(String selectedTitle) {
     return GestureDetector(
       onTap: () async {
+        bool status;
         // TODO: 按鈕顯示載入動畫
 
         if (selectedTitle == '註 冊') {
-          bool status = await enrollTask();
+          status = await enrollTask();
         } else {
-          await loginTask();
+          status = await loginTask();
         }
 
-        setState(() {});
+        if (status) {
+          setState(() {
+            Navigator.pushReplacementNamed(context, '/home');
+          });
+        } else {
+          // TODO: 取消顯示載入動畫
+        }
       },
       child: const AvatarGlow(
         animate: true,
@@ -250,20 +258,19 @@ class _LoginPageState extends State<LoginPage> {
     try {
       response = await Dio().post(
         'https://tra-helper-backend.herokuapp.com/rest-auth/login/',
-        data: {'username': widget.usernameController, 'password': widget.pwdController},
+        data: {'username': widget.usernameController.text, 'password': widget.pwdController.text},
       );
-    } catch (e) {
-      errorDialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+    } on DioError catch (e) {
+      if (e.response != null) {
+        if (e.response!.statusCode == 400) errorDialog(context, '登入資訊錯誤', '您填入的帳號或密碼有誤');
+      } else {
+        errorDialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+      }
+
       return false;
     }
 
-    if (response.statusCode == 200) {
-      // TODO: 寫入資料到App
-      return true;
-    } else {
-      errorDialog(context, '發生錯誤', '您填入的資訊有誤'); // TODO: 擷取錯誤訊息並輸出
-      return false;
-    }
+    return true;
   }
 
   /* INFO: 註冊 POST 函式 */
