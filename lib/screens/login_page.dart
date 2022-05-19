@@ -3,8 +3,11 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
 
 import '/config/palette.dart';
+import '/config/user.dart';
+import '/widgets/widgets.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -38,7 +41,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final double vw = MediaQuery.of(context).size.width;
-    final double vh = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()), // 點擊螢幕任一處以轉移焦點
@@ -220,21 +222,19 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () async {
         setState(() => isWorking = true);
-        bool status;
 
         if (selectedTitle == '註 冊') {
-          status = await enrollTask();
+          await enrollTask();
         } else {
+          bool status;
           status = await loginTask();
+          if (status) {
+            setState(() {
+              Navigator.pushReplacementNamed(context, '/home');
+            });
+          }
         }
-
-        if (status) {
-          setState(() {
-            Navigator.pushReplacementNamed(context, '/home');
-          });
-        } else {
-          setState(() => isWorking = true);
-        }
+        setState(() => isWorking = false);
       },
       child: AvatarGlow(
         animate: true,
@@ -259,26 +259,49 @@ class _LoginPageState extends State<LoginPage> {
   Future<bool> loginTask() async {
     Response response;
 
+    /* INFO: 登入驗證 request，若有任一環節失敗則回傳 false */
     try {
       response = await Dio().post(
-        'https://tra-helper-backend.herokuapp.com/rest-auth/login/',
+        'https://tra-helper-backend.herokuapp.com/login/',
         data: {'username': widget.usernameController.text, 'password': widget.pwdController.text},
       );
     } on DioError catch (e) {
       if (e.response != null) {
-        if (e.response!.statusCode == 400) dialog(context, '登入資訊錯誤', '您填入的帳號或密碼有誤');
+        if (e.response!.statusCode == 400) Widgets.dialog(context, '登入資訊錯誤', '您填入的帳號或密碼有誤');
       } else {
-        dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+        Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
       }
 
       return false;
     }
 
+    /* INFO: 資料查詢 request，前面 request 成功才會執行這裡 */
+    String id = response.data['id'].toString();
+    String key = response.data['key'];
+    try {
+      response = await Dio().get(
+        'https://tra-helper-backend.herokuapp.com/accounts/$id/',
+        options: Options(headers: {'Authorization': 'Token $key'}),
+      );
+    } on DioError {
+      Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+      return false;
+    }
+
+    Provider.of<User>(context, listen: false).loginOrUpdate(
+      id: id,
+      account: response.data['identity_number'],
+      apiKey: key,
+      lastname: response.data['last_name'],
+      firstname: response.data['first_name'],
+      phone: response.data['phone_number'],
+    ); // 更新 User 資料卻不重構 UI
+
     return true;
   }
 
   /* INFO: 註冊 POST 函式 */
-  Future<bool> enrollTask() async {
+  Future<void> enrollTask() async {
     Response response;
 
     try {
@@ -294,31 +317,15 @@ class _LoginPageState extends State<LoginPage> {
       );
     } on DioError catch (e) {
       if (e.response != null) {
-        if (e.response!.statusCode == 400) dialog(context, '註冊資訊錯誤', '您填入的資訊不符合規範或是有漏填');
+        if (e.response!.statusCode == 400) Widgets.dialog(context, '註冊資訊錯誤', '您填入的資訊不符合規範或是有漏填');
       } else {
-        dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+        Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
       }
 
-      return false;
+      return;
     }
 
-    return true;
-  }
-
-  /* INFO: 提示方塊 */
-  void dialog(BuildContext context, String title, String content) {
-    AlertDialog dialog = AlertDialog(
-      title: Text(title),
-      content: Text(content),
-      scrollable: true,
-      actions: [
-        TextButton(
-          child: const Text('確認'),
-          onPressed: () => Navigator.pop(context),
-        )
-      ],
-    );
-
-    showDialog(context: context, builder: (BuildContext context) => dialog);
+    Widgets.dialog(context, '註冊成功', '請前往登入頁面登入');
+    selectedTitle = '登 入';
   }
 }

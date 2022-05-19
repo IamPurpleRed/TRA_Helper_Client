@@ -11,7 +11,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('我的票匝頁面'),
+      child: const Text('我的票匝頁面'),
     );
   }
 }

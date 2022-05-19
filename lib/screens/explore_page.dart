@@ -11,7 +11,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('探索頁面'),
+      child: const Text('探索頁面'),
     );
   }
 }

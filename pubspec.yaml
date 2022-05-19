@@ -18,6 +18,7 @@ dependencies:
   flutter_spinkit: ^5.1.0 # 按鈕載入動畫
   package_info_plus: ^1.4.0 # 取得版本號
   dio: ^4.0.6 # HTTP Request
+  provider: ^6.0.2 # 狀態管理
 
 dev_dependencies:
   flutter_test:

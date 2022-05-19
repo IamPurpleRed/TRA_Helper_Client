@@ -11,7 +11,7 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('班次查詢頁面'),
+      child: const Text('班次查詢頁面'),
     );
   }
 }
