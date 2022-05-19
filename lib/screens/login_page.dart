@@ -12,7 +12,7 @@ import '/widgets/widgets.dart';
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
 
-  final usernameController = TextEditingController();
+  final accountController = TextEditingController();
   final pwdController = TextEditingController();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
           textfield(
             prefixIcon: const Icon(Icons.account_circle),
             fieldName: '身分證字號 (請使用英文大寫)',
-            controller: widget.usernameController,
+            controller: widget.accountController,
             keyboardType: TextInputType.visiblePassword,
           ),
           textfield(
@@ -263,7 +263,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       response = await Dio().post(
         'https://tra-helper-backend.herokuapp.com/login/',
-        data: {'username': widget.usernameController.text, 'password': widget.pwdController.text},
+        data: {'username': widget.accountController.text, 'password': widget.pwdController.text},
       );
     } on DioError catch (e) {
       if (e.response != null) {
@@ -291,7 +291,7 @@ class _LoginPageState extends State<LoginPage> {
     Provider.of<User>(context, listen: false).loginOrUpdate(
       id: id,
       account: response.data['identity_number'],
-      apiKey: key,
+      key: key,
       lastname: response.data['last_name'],
       firstname: response.data['first_name'],
       phone: response.data['phone_number'],
@@ -310,7 +310,7 @@ class _LoginPageState extends State<LoginPage> {
         data: {
           'last_name': widget.lastNameController.text,
           'first_name': widget.firstNameController.text,
-          'identity_number': widget.usernameController.text,
+          'identity_number': widget.accountController.text,
           'password': widget.pwdController.text,
           'phone_number': widget.phoneController.text,
         },
