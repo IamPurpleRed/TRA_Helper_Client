@@ -5,10 +5,12 @@ import '/screens/home_page.dart';
 import '/screens/schedule_search_page.dart';
 import '/screens/my_tickets_page.dart';
 import '/screens/explore_page.dart';
+import 'map.dart';
 
 const bool loginStatus = true; // 暫時變數，有登入即為true
 
 class MainFrame extends StatefulWidget {
+
   MainFrame({Key? key}) : super(key: key);
 
   final List<Widget> _pages = [
@@ -124,9 +126,15 @@ class _MainFrameState extends State<MainFrame> {
           ],
         ),
         onTap: () {
-          setState(() => currentPageIndex = index);
+          if (index == 3){
+            start();
+          } else{
+            setState(() => currentPageIndex = index);
+          }
         },
       ),
     );
   }
 }
+
+

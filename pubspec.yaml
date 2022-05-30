@@ -20,6 +20,10 @@ dependencies:
   dio: ^4.0.6 # HTTP Request
   provider: ^6.0.2 # 狀態管理
   shared_preferences: ^2.0.15 # 儲存資料在本地
+  flutter_mapbox_navigation: ^0.0.26
+  location: ^4.3.0
+  flutter_map: ^0.14.0
+  flutter_rating_bar: ^4.0.0
 
 dev_dependencies:
   flutter_test:

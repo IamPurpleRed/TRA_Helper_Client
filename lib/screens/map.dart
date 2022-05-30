@@ -1,89 +1,75 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:tra_helper/screens/main_frame.dart';
 
-class ExplorePage extends StatefulWidget {
-  const ExplorePage({Key? key}) : super(key: key);
+String _instruction = "";
 
-  @override
-  State<ExplorePage> createState() => _ExplorePageState();
+late MapBoxNavigation _directions;
+late MapBoxOptions _options;
+
+bool _isMultipleStop = false;
+late double _distanceRemaining, _durationRemaining;
+late MapBoxNavigationViewController _controller;
+bool _routeBuilt = false;
+bool _isNavigating = false;
+var wayPoints = <WayPoint>[];
+late LatLng currentLocation;
+
+void start() {
+  initializeLocationAndSave().whenComplete(() => initialize());
 }
 
-class _ExplorePageState extends State<ExplorePage> {
-  
-  String _instruction = "";
+Future<void> initializeLocationAndSave() async {
+  // Ensure all permissions are collected for Locations
+  Location _location = Location();
+  bool? _serviceEnabled;
+  PermissionStatus? _permissionGranted;
 
-  late MapBoxNavigation _directions;
-  late MapBoxOptions _options;
-
-  bool _isMultipleStop = false;
-  late double _distanceRemaining, _durationRemaining;
-  late MapBoxNavigationViewController _controller;
-  bool _routeBuilt = false;
-  bool _isNavigating = false;
-  var wayPoints = <WayPoint>[];
-  late LatLng currentLocation;
-
-  @override
-  void initState() {
-    super.initState();
-    initializeLocationAndSave().whenComplete(() => initialize());
+  _serviceEnabled = await _location.serviceEnabled();
+  if (!_serviceEnabled) {
+    _serviceEnabled = await _location.requestService();
   }
 
-  Future<void> initializeLocationAndSave() async {
-    // Ensure all permissions are collected for Locations
-    Location _location = Location();
-    bool? _serviceEnabled;
-    PermissionStatus? _permissionGranted;
-
-    _serviceEnabled = await _location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await _location.requestService();
-    }
-
-    _permissionGranted = await _location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _location.requestPermission();
-    }
-
-    // Get the current user location
-    LocationData _locationData = await _location.getLocation();
-    currentLocation =
-        LatLng(_locationData.latitude!, _locationData.longitude!);
+  _permissionGranted = await _location.hasPermission();
+  if (_permissionGranted == PermissionStatus.denied) {
+    _permissionGranted = await _location.requestPermission();
   }
+
+  // Get the current user location
+  LocationData _locationData = await _location.getLocation();
+  currentLocation =
+      LatLng(_locationData.latitude!, _locationData.longitude!);
+}
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initialize() async {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted) return;
 
     _directions = MapBoxNavigation(onRouteEvent: _onEmbeddedRouteEvent);
     _options = MapBoxOptions(
         initialLatitude: 36.1175275,
         initialLongitude: -115.1839524,
-        zoom: 20.0,
+        zoom: 0.0,
         tilt: 0.0,
-        bearing: 0.0,
+        bearing: 60.0,
         enableRefresh: false,
         alternatives: true,
         voiceInstructionsEnabled: true,
         simulateRoute: false,
         bannerInstructionsEnabled: true,
         allowsUTurnAtWayPoints: true,
-        mode: MapBoxNavigationMode.drivingWithTraffic,
+        mode: MapBoxNavigationMode.walking,
         units: VoiceUnits.imperial,
-        animateBuildRoute: false,
+        animateBuildRoute: true,
         longPressDestinationEnabled: true,
         language: "zh-tw");
 
     final _currentlocation = WayPoint(
-        name: "Way Point 1",
+        name: "current location",
         latitude: currentLocation.latitude,
         longitude: currentLocation.longitude);
 
@@ -103,17 +89,8 @@ class _ExplorePageState extends State<ExplorePage> {
       platformVersion = 'Failed to get platform version.';
     }
 
-    setState(() {
-    });
-
-
     // Start the trip
     await _directions.startNavigation(wayPoints: wayPoints, options: _options);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MainFrame();
   }
 
   Future<void> _onEmbeddedRouteEvent(e) async {
@@ -128,19 +105,13 @@ class _ExplorePageState extends State<ExplorePage> {
         break;
       case MapBoxEvent.route_building:
       case MapBoxEvent.route_built:
-        setState(() {
           _routeBuilt = true;
-        });
         break;
       case MapBoxEvent.route_build_failed:
-        setState(() {
           _routeBuilt = false;
-        });
         break;
       case MapBoxEvent.navigation_running:
-        setState(() {
           _isNavigating = true;
-        });
         break;
       case MapBoxEvent.on_arrival:
         if (!_isMultipleStop) {
@@ -150,21 +121,10 @@ class _ExplorePageState extends State<ExplorePage> {
         break;
       case MapBoxEvent.navigation_finished:
       case MapBoxEvent.navigation_cancelled:
-        setState(() {
-          print('here!!!!!!!!!!!!!!!!!!');
           _routeBuilt = false;
           _isNavigating = false;
-          //Navigator.maybePop(context);
-          //Navigator.pop(context);
-          //Navigator.of(context).pop();
-          //Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
-          print('back!!!!!!!!!!');
-          print(context);
-        });
         break;
       default:
         break;
     }
-    setState(() {});
   }
-}
