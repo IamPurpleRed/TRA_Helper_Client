@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tra_helper/screens/explore_page.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -67,7 +66,6 @@ class TraHelperApp extends StatelessWidget {
         routes: {
           '/home': (context) => MainFrame(),
           '/login': (context) => LoginPage(),
-          '/map':(context) => ExplorePage(),
         },
       ),
     );
