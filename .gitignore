@@ -46,4 +46,4 @@ app.*.map.json
 /android/app/release
 
 # Dialogflow key
-/assets/credentials.json
+/assets/pr-tra-helper-credentials.json

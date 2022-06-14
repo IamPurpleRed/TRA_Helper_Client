@@ -20,9 +20,9 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
   void initState() {
     super.initState();
     initStt();
-    DialogFlowtter.fromFile(path: 'assets/credentials.json').then((instance) {
+    DialogFlowtter.fromFile(path: 'assets/pr-tra-helper-credentials.json').then((instance) {
       dialogFlowtter = instance;
-      dialogFlowtter.projectId = 'tra-helper-rwxl';
+      dialogFlowtter.projectId = 'pr-tra-helper';
     });
   }
 
@@ -46,7 +46,7 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
     await speechToText.stop();
     if (requestString == '') {
       setState(() {
-        responseString = '抱歉！我沒聽清楚';
+        responseString = '抱歉，我聽不太懂！您可以試著說「功能查詢」了解我能幫上什麼忙';
       });
       return;
     }
