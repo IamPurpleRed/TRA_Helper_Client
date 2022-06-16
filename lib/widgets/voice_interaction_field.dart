@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class VoiceInterationField extends StatefulWidget {
-  const VoiceInterationField({Key? key}) : super(key: key);
+  VoiceInterationField({Key? key}) : super(key: key);
+
+  final FlutterTts tts = FlutterTts();
 
   @override
   State<VoiceInterationField> createState() => VoiceInterationFieldState();

@@ -20,6 +20,7 @@ dependencies:
   dio: ^4.0.6 # HTTP Request
   provider: ^6.0.2 # 狀態管理
   shared_preferences: ^2.0.15 # 儲存資料在本地
+  flutter_tts: ^3.4.0 # 文字轉語音
 
 dev_dependencies:
   flutter_test:
