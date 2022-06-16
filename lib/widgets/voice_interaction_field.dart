@@ -3,6 +3,9 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+import '/config/constants.dart';
+import '/config/palette.dart';
+
 class VoiceInterationField extends StatefulWidget {
   VoiceInterationField({Key? key}) : super(key: key);
 
@@ -71,10 +74,55 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
 
   @override
   Widget build(BuildContext context) {
+    final double vw = MediaQuery.of(context).size.width;
+    final double vh = MediaQuery.of(context).size.height;
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(requestString, style: const TextStyle(fontSize: 20)),
-        Text(responseString, style: const TextStyle(fontSize: 20)),
+        /* 使用者 */
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: vw * 0.75),
+              child: Container(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: (requestString == '') ? 0 : 15.0,
+                    vertical: 8.0,
+                  ),
+                  child: Text(requestString, style: const TextStyle(fontSize: Constants.contentTextSize)),
+                ),
+                decoration: BoxDecoration(
+                  color: Palette.secondaryColor,
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        /* 分隔 */
+        SizedBox(height: vh * 0.01),
+
+        /* dialogflow 回覆 */
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: vw * 0.75),
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: (responseString == '') ? 0 : 15.0,
+                vertical: 8.0,
+              ),
+              child: Text(responseString, style: const TextStyle(fontSize: Constants.contentTextSize)),
+            ),
+            decoration: BoxDecoration(
+              color: Palette.primaryColor,
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+          ),
+        ),
       ],
     );
   }

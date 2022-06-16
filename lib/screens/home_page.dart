@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                width: vw * 0.65,
-                height: vw * 0.65,
+                width: vh * 0.25,
+                height: vh * 0.25,
                 child: AvatarGlow(
                   animate: isPressing,
                   endRadius: 150.0,
@@ -50,21 +50,23 @@ class _HomePageState extends State<HomePage> {
               ),
               AnimatedContainer(
                 duration: HomePage.animateTime,
-                height: hasVoiceInteractionField ? 0 : vh * 0.05,
+                height: hasVoiceInteractionField ? vh * 0.01 : vh * 0.05,
               ),
               const Text(
-                '您現在位於 新左營車站',
+                '您現在位於 新左營站',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 28.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: vh * 0.05),
               AnimatedContainer(
                 duration: HomePage.animateTime,
-                height: hasVoiceInteractionField ? vh * 0.35 : 0,
-                child: VoiceInterationField(key: widget.voiceInteractionFieldKey),
+                width: vw * 0.9,
+                height: hasVoiceInteractionField ? vh * 0.32 : 0,
+                child: SingleChildScrollView(child: VoiceInterationField(key: widget.voiceInteractionFieldKey)),
               ),
+              SizedBox(height: vh * 0.03),
             ],
           ),
         ),

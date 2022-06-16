@@ -19,13 +19,13 @@ class MainFrame extends StatefulWidget {
   ];
   static const List<String> _pageTitles = [
     '台鐵幫幫盲',
-    '班次查詢',
-    '我的票匣',
+    '訂票',
+    '我的車票',
     '探索',
   ];
   static const List<IconData> _pageIcons = [
     Icons.home,
-    Icons.schedule,
+    Icons.shopping_cart,
     Icons.confirmation_number,
     Icons.location_on,
   ];
@@ -52,7 +52,7 @@ class _MainFrameState extends State<MainFrame> {
           Padding(
             padding: EdgeInsets.all(12),
             child: Center(
-              child: loginStatus ? Text('登入', style: TextStyle(fontSize: 18)) : Icon(Icons.account_circle),
+              child: Icon(Icons.account_circle),
             ),
           ),
         ],
