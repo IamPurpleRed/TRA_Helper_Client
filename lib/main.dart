@@ -20,7 +20,7 @@ void main() async {
   bool isLogin = (prefs.getString('key') != null) ? true : false; // 尋找有沒有資料
   runApp(
     ChangeNotifierProvider(
-      create: (context) => (isLogin)
+      create: (context) => isLogin
           ? User.iHaveData(
               id: prefs.getString('id')!,
               account: prefs.getString('account')!,
