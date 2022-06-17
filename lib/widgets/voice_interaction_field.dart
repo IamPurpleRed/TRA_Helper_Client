@@ -56,14 +56,20 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
       });
       return;
     }
+    await Future.delayed(const Duration(seconds: 1)); // 確保錯字有被修正
     DetectIntentResponse response = await dialogFlowtter.detectIntent(
       queryInput: QueryInput(text: TextInput(text: requestString, languageCode: 'zh-TW')),
     );
 
-    if (response.message == null) return;
-    setState(() {
-      responseString = response.text!;
-    });
+    if (response.message == null) {
+      setState(() {
+        responseString = '發生錯誤，請稍後再試';
+      });
+    } else {
+      setState(() {
+        responseString = response.text!;
+      });
+    }
   }
 
   @override
