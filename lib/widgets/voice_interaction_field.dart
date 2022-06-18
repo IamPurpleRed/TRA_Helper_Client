@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 import '/config/constants.dart';
 import '/config/palette.dart';
 
 class VoiceInterationField extends StatefulWidget {
-  const VoiceInterationField({Key? key}) : super(key: key);
+  VoiceInterationField({Key? key}) : super(key: key);
 
   @override
   State<VoiceInterationField> createState() => VoiceInterationFieldState();
@@ -17,6 +18,7 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
   String requestString = '';
   late DialogFlowtter dialogFlowtter;
   List<String> responseStringList = [];
+  FlutterTts tts = FlutterTts();
 
   @override
   void initState() {
@@ -26,6 +28,8 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
       dialogFlowtter = instance;
       dialogFlowtter.projectId = 'pr-tra-helper';
     });
+
+    tts.setLanguage('zh-TW');
   }
 
   void initStt() async {
@@ -49,6 +53,7 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
     if (requestString == '') {
       setState(() {
         responseStringList = ['抱歉，我聽不太懂！您可以試著說「功能查詢」了解我能幫上什麼忙'];
+        tts.speak(responseStringList[0]);
       });
       return;
     }
@@ -63,9 +68,15 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
         responseStringList.add(messageList[i].text!.text![0]);
       }
       setState(() {});
+
+      /* INFO: 朗讀response */
+      for (int i = 0; i < responseStringList.length; i++) {
+        await tts.speak(responseStringList[i]);
+      }
     } catch (e) {
       setState(() {
         responseStringList = ['發生錯誤，請稍後再試'];
+        tts.speak(responseStringList[0]);
       });
     }
   }
@@ -82,7 +93,7 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
     final double vh = MediaQuery.of(context).size.height;
 
     List<Widget> children = [
-      /* 使用者 */
+      /* INFO: request 對話框 */
       Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -105,10 +116,12 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
         ],
       ),
 
-      /* 分隔 */
+      /* INFO: 分隔 */
       SizedBox(height: vh * 0.01),
     ];
 
+    /* INFO: response 對話框 */
+    /* NOTE: 因為response數量不確定，因此採用動態載入 */
     for (int i = 0; i < responseStringList.length; i++) {
       children.add(
         Padding(

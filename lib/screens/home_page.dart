@@ -76,11 +76,15 @@ class _HomePageState extends State<HomePage> {
           width: vw,
           height: hasVoiceInteractionField ? vh * 0.4 : vh * 0.5,
           child: GestureDetector(
-            onTap: (() => print('tap')), // TODO: 重複播放上次回覆內容
-            onLongPress: (() {
-              widget.voiceInteractionFieldKey.currentState!.requestString = '';
-              widget.voiceInteractionFieldKey.currentState!.responseStringList = [];
-              widget.voiceInteractionFieldKey.currentState!.startListening();
+            onTap: (() async {
+              await widget.voiceInteractionFieldKey.currentState!.tts.stop();
+            }),
+            onLongPress: (() async {
+              VoiceInterationFieldState state = widget.voiceInteractionFieldKey.currentState!;
+              await state.tts.stop();
+              state.requestString = '';
+              state.responseStringList = [];
+              state.startListening();
               setState(() {
                 isPressing = true;
                 hasVoiceInteractionField = true;
