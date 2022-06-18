@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
             onTap: (() => print('tap')), // TODO: 重複播放上次回覆內容
             onLongPress: (() {
               widget.voiceInteractionFieldKey.currentState!.requestString = '';
-              widget.voiceInteractionFieldKey.currentState!.responseString = '';
+              widget.voiceInteractionFieldKey.currentState!.responseStringList = [];
               widget.voiceInteractionFieldKey.currentState!.startListening();
               setState(() {
                 isPressing = true;
