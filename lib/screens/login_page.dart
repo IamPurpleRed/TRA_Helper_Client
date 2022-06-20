@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import '/config/palette.dart';
 import '/config/user.dart';
-import '/widgets/widgets.dart';
+import '/widgets/components.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 // NOTE: TextField 外面要包 Expanded 才能使其在同一列
                 Expanded(
-                  child: textfield(
+                  child: Components.textfield(
                     prefixIcon: const Icon(Icons.abc),
                     fieldName: '姓',
                     controller: widget.lastNameController,
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 Expanded(
-                  child: textfield(
+                  child: Components.textfield(
                     prefixIcon: const Icon(Icons.abc),
                     fieldName: '名',
                     controller: widget.firstNameController,
@@ -164,19 +164,19 @@ class _LoginPageState extends State<LoginPage> {
 
           /* INFO: 手機欄位 (註冊專用) */
           if (selectedTitle == '註 冊')
-            textfield(
+            Components.textfield(
               prefixIcon: const Icon(Icons.phone_android),
               fieldName: '手機號碼',
               controller: widget.phoneController,
               keyboardType: TextInputType.phone,
             ),
-          textfield(
+          Components.textfield(
             prefixIcon: const Icon(Icons.account_circle),
             fieldName: '身分證字號 (請使用英文大寫)',
             controller: widget.accountController,
             keyboardType: TextInputType.visiblePassword,
           ),
-          textfield(
+          Components.textfield(
             prefixIcon: const Icon(Icons.vpn_key),
             fieldName: '密碼',
             controller: widget.pwdController,
@@ -184,35 +184,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
           submitButton(selectedTitle),
         ],
-      ),
-    );
-  }
-
-  /* INFO: 輸入格 */
-  Padding textfield({required Icon prefixIcon, required String fieldName, required TextInputType keyboardType, required TextEditingController controller}) {
-    const double fontSize = 18.0;
-
-    return Padding(
-      padding: const EdgeInsets.all(6.0),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        obscureText: (fieldName == '密碼') ? true : false,
-        style: const TextStyle(fontSize: fontSize),
-        decoration: InputDecoration(
-          hintText: fieldName,
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: fontSize),
-          contentPadding: const EdgeInsets.all(6.0),
-          prefixIcon: prefixIcon,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(35.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Palette.secondaryColor),
-            borderRadius: BorderRadius.circular(35.0),
-          ),
-        ),
       ),
     );
   }
@@ -267,9 +238,9 @@ class _LoginPageState extends State<LoginPage> {
       );
     } on DioError catch (e) {
       if (e.response != null) {
-        if (e.response!.statusCode == 400) Widgets.dialog(context, '登入資訊錯誤', '您填入的帳號或密碼有誤');
+        if (e.response!.statusCode == 400) Components.dialog(context, '登入資訊錯誤', '您填入的帳號或密碼有誤');
       } else {
-        Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+        Components.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
       }
 
       return false;
@@ -284,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
         options: Options(headers: {'Authorization': 'Token $key'}),
       );
     } on DioError {
-      Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+      Components.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
       return false;
     }
 
@@ -317,15 +288,15 @@ class _LoginPageState extends State<LoginPage> {
       );
     } on DioError catch (e) {
       if (e.response != null) {
-        if (e.response!.statusCode == 400) Widgets.dialog(context, '註冊資訊錯誤', '您填入的資訊不符合規範或是有漏填');
+        if (e.response!.statusCode == 400) Components.dialog(context, '註冊資訊錯誤', '您填入的資訊不符合規範或是有漏填');
       } else {
-        Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+        Components.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
       }
 
       return;
     }
 
-    Widgets.dialog(context, '註冊成功', '請前往登入頁面登入');
+    Components.dialog(context, '註冊成功', '請前往登入頁面登入');
     selectedTitle = '登 入';
   }
 }

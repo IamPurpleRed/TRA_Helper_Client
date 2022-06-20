@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '/config/palette.dart';
 import '/screens/home_page.dart';
-import '/screens/schedule_search_page.dart';
+import 'book_ticket_page.dart';
 import '/screens/my_tickets_page.dart';
 import '/screens/explore_page.dart';
 
@@ -13,7 +13,7 @@ class MainFrame extends StatefulWidget {
 
   final List<Widget> _pages = [
     HomePage(),
-    const ScheduleSearchPage(),
+    ScheduleSearchPage(),
     const MyTicketsPage(),
     const ExplorePage(),
   ];

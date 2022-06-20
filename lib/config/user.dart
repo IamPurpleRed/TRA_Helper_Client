@@ -34,8 +34,6 @@ class User extends ChangeNotifier {
     prefs.setString('lastname', lastname);
     prefs.setString('firstname', firstname);
     prefs.setString('phone', phone);
-
-    notifyListeners();
   }
 
   /* INFO: 當使用者登出時要執行的函式 */
@@ -46,6 +44,5 @@ class User extends ChangeNotifier {
     lastname = null;
     firstname = null;
     phone = null;
-    notifyListeners();
   }
 }
