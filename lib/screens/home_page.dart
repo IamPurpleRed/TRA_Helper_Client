@@ -64,7 +64,10 @@ class _HomePageState extends State<HomePage> {
                 duration: HomePage.animateTime,
                 width: vw * 0.9,
                 height: hasVoiceInteractionField ? vh * 0.32 : 0,
-                child: SingleChildScrollView(child: VoiceInterationField(key: widget.voiceInteractionFieldKey)),
+                child: SingleChildScrollView(
+                  child: VoiceInterationField(key: widget.voiceInteractionFieldKey),
+                  physics: const BouncingScrollPhysics(),
+                ),
               ),
               SizedBox(height: vh * 0.03),
             ],

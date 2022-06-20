@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tra_helper/config/palette.dart';
 
 import '/widgets/components.dart';
+import '/config/palette.dart';
+import '/config/constants.dart';
 
 class ScheduleSearchPage extends StatefulWidget {
   ScheduleSearchPage({Key? key}) : super(key: key);
@@ -51,13 +52,16 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
                     child: Container(color: Palette.secondaryColor),
                   ),
                   TextButton(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.all(16.0),
-                      primary: Colors.white,
-                      textStyle: const TextStyle(fontSize: 20),
-                    ),
+                    child: const Text('訂票'),
                     onPressed: () {},
-                    child: const Text('Gradient'),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0,
+                        vertical: 8.0,
+                      ),
+                      primary: Colors.white,
+                      textStyle: const TextStyle(fontSize: Constants.buttonTextSize),
+                    ),
                   ),
                 ],
               ),

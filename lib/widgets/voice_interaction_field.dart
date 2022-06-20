@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
@@ -71,8 +73,12 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
 
       /* INFO: 朗讀response */
       for (int i = 0; i < responseStringList.length; i++) {
+        final completer = Completer();
         await tts.speak(responseStringList[i]);
-        await tts.awaitSpeakCompletion(true);
+        tts.setCompletionHandler(() {
+          completer.complete();
+        });
+        await completer.future;
       }
     } catch (e) {
       setState(() {
@@ -128,31 +134,28 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
       if (responseStringList[i].contains('//')) {
         List<String> params = responseStringList[i].split('//');
         children.add(
-          Padding(
-            padding: EdgeInsets.only(bottom: vh * 0.01),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: vw * 0.75),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5.0),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: Container(color: Palette.primaryColor),
-                    ),
-                    TextButton(
-                      child: Text('${params[0]}車次：${params[2]}上車，${params[4]}抵達'),
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0,
-                          vertical: 8.0,
-                        ),
-                        primary: Colors.white,
-                        textStyle: const TextStyle(fontSize: Constants.contentTextSize),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: vw * 0.75),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Stack(
+                children: <Widget>[
+                  Positioned.fill(
+                    child: Container(color: Palette.primaryColor),
+                  ),
+                  TextButton(
+                    child: Text('${params[0]}車次：${params[2]}上車，${params[4]}抵達'),
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0,
+                        vertical: 8.0,
                       ),
+                      primary: Colors.white,
+                      textStyle: const TextStyle(fontSize: Constants.contentTextSize),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -162,27 +165,27 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
       /* INFO: 一般對話框 */
       else {
         children.add(
-          Padding(
-            padding: EdgeInsets.only(bottom: vh * 0.01),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: vw * 0.75),
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15.0,
-                    vertical: 8.0,
-                  ),
-                  child: Text(responseStringList[i], style: const TextStyle(fontSize: Constants.contentTextSize)),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: vw * 0.75),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15.0,
+                  vertical: 8.0,
                 ),
-                decoration: BoxDecoration(
-                  color: Palette.primaryColor,
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
+                child: Text(responseStringList[i], style: const TextStyle(fontSize: Constants.contentTextSize)),
+              ),
+              decoration: BoxDecoration(
+                color: Palette.primaryColor,
+                borderRadius: BorderRadius.circular(5.0),
               ),
             ),
           ),
         );
       }
+
+      /* INFO: 分隔 */
+      children.add(SizedBox(height: vh * 0.01));
     }
 
     return Column(
