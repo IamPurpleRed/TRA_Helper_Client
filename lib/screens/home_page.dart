@@ -76,12 +76,12 @@ class _HomePageState extends State<HomePage> {
           width: vw,
           height: hasVoiceInteractionField ? vh * 0.4 : vh * 0.5,
           child: GestureDetector(
-            onTap: (() async {
-              await widget.voiceInteractionFieldKey.currentState!.tts.stop();
+            onTap: (() {
+              widget.voiceInteractionFieldKey.currentState!.tts.stop();
             }),
-            onLongPress: (() async {
+            onLongPress: (() {
               VoiceInterationFieldState state = widget.voiceInteractionFieldKey.currentState!;
-              await state.tts.stop();
+              state.tts.stop();
               state.requestString = '';
               state.responseStringList = [];
               state.startListening();
