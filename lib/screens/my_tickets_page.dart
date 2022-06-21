@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
-
+import 'package:qr_flutter/qr_flutter.dart';
 import '/config/user.dart';
 import '/config/ticket.dart';
 import '/widgets/widgets.dart';
@@ -27,11 +27,13 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
         if (isLoading) {
           checkTicket(user);
           return loadingUI();
-        } else {
+        }else {
           if (ticket == null) {
+            print("ticket is null");
             return noTicketUI();
           } else {
-            return hasTicketUI(vw, vh);
+            print("ticket is not null");
+            return hasTicketUI(vw, vh, ticket!);
           }
         }
       },
@@ -53,41 +55,26 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
   }
 
   /* INFO: 有車票畫面 */
-  Widget hasTicketUI(double vw, double vh) {
+  Widget hasTicketUI(double vw, double vh,Ticket? ticket) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          // TODO: 把futurebuilder拿掉
-          /*
-            Container(
+
+          Container(
               width: vw * 0.8,
               height: vw * 0.8,
               padding: const EdgeInsets.all(20.0),
               color: Colors.white,
-              child: FutureBuilder<bool>(
-                future: checkTicket(user),
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    } else {
-                      return Container(
+              child:  Container(
                         child: QrImage(
-                          data: qrcodeData,
+                          data: ticket!.urlQR,
                           version: QrVersions.auto,
                           size: vw * 0.7,
                         ),
-                      );
-                    }
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
               ),
-            ),
-            */
+          ),
           Container(
             child: const Text('起點： 上車時間：', style: TextStyle(fontSize: 24)),
           ),
@@ -108,6 +95,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
         'https://tra-helper-backend.herokuapp.com/accounts/${user.id}/tickets/',
         options: Options(headers: {'Authorization': 'Token ${user.key}'}),
       );
+
     } on DioError {
       Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
       setState(() {
@@ -118,10 +106,37 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
 
     print(response);
     print('QR_url 字串：' + response.data[0]['QR_url']);
+    print('url 字串：' + response.data[0]['url']);
+    String url=response.data[0]['url'];
+    String id=response.data[0]['id'].toString();
+    String users=response.data[0]['user'].toString();
+    String date=response.data[0]['date'];
+    String startStation= response.data[0]['start_station'].toString();
+    String endStation= response.data[0]['end_station'].toString();
+    String train=response.data[0]['train'].toString();
+    String seat=response.data[0]['seat'];
+    String urlQR= response.data[0]['QR_url'];
     // 建立ticket物件
-    // setState(() {
-    //   ticket = Ticket();
-    //   isLoading = false;
-    // });
+    setState(() {
+      if(url==null){
+        return;
+      }
+      else{
+        ticket = Ticket(
+            url:url,
+            id:id,
+            user:users,
+            date:date,
+            startStation: startStation,
+            endStation: endStation,
+            train: train,
+            seat: seat,
+            urlQR: urlQR
+        );
+        isLoading = false;
+        print('isLoading = false');
+      }
+
+    });
   }
 }

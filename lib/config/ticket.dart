@@ -11,7 +11,7 @@ class Ticket extends ChangeNotifier {
   String seat;
   String urlQR;
 
-  Ticket({
+  Ticket( {
     required this.url,
     required this.id,
     required this.user,
