@@ -7,6 +7,8 @@ class Ticket extends ChangeNotifier {
   String date;
   String startStation;
   String endStation;
+  String startTime;
+  String endTime;
   String train;
   String seat;
   String urlQR;
@@ -18,6 +20,8 @@ class Ticket extends ChangeNotifier {
     required this.date,
     required this.startStation,
     required this.endStation,
+    required this.startTime,
+    required this.endTime,
     required this.train,
     required this.seat,
     required this.urlQR,

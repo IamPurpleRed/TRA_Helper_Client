@@ -5,6 +5,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '/config/user.dart';
 import '/config/ticket.dart';
 import '/widgets/widgets.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:intl/intl.dart';
 
 class MyTicketsPage extends StatefulWidget {
   const MyTicketsPage({Key? key}) : super(key: key);
@@ -42,21 +44,38 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
 
   /* INFO: 載入畫面 */
   Widget loadingUI() {
-    return const Center(
-      child: Text('載入中頁面'),
+    return Center(
+      child: LoadingAnimationWidget.inkDrop(
+          color: Colors.white70,
+          size: 100,
+      ),
     );
   }
 
   /* INFO: 無車票畫面 */
   Widget noTicketUI() {
     return const Center(
-      child: Text('無車票頁面'),
+      child: Text('目前沒有車票',style: TextStyle(fontSize: 24)),
     );
   }
 
   /* INFO: 有車票畫面 */
   Widget hasTicketUI(double vw, double vh,Ticket? ticket) {
+    String formateStartTime1="";
+    String formateStartTime2="";
+    String formateEndTime1="";
+    String formateEndTime2="";
+    if(ticket != null){
+      DateTime startTime = DateTime.parse(ticket.startTime);
+      DateTime endTime = DateTime.parse(ticket.endTime);
+      formateStartTime1 = DateFormat('yyyy-MM-dd').format(startTime);
+      formateStartTime2 = DateFormat('kk:mm').format(startTime);
+      formateEndTime1 = DateFormat('yyyy-MM-dd').format(endTime);
+      formateEndTime2 = DateFormat('kk:mm').format(endTime);
+    }
     return Center(
+
+
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,11 +94,51 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                         ),
               ),
           ),
-          Container(
-            child: const Text('起點： 上車時間：', style: TextStyle(fontSize: 24)),
+          /*Container(
+            margin: EdgeInsets.all(10),
+            child: Text("${ticket.startStation} ${formateStartTime}", style: TextStyle(fontSize: 20)),
           ),
           Container(
-            child: const Text('終點： 到站時間：', style: TextStyle(fontSize: 24)),
+
+            child: Text('${ticket.endStation} ${formateEndTime}', style: TextStyle(fontSize: 20)),
+          ),*/
+          Container(
+            margin: EdgeInsets.all(20),
+            child: Row(
+
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children:[
+                      Text("${ticket.startStation}", style: TextStyle(height:1.5,fontSize: 20)),
+                      Text("${formateStartTime1}", style: TextStyle(height:1.5,fontSize: 20)),
+                      Text("${formateStartTime2}", style: TextStyle(height:1.5,fontSize: 20)),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.arrow_right,
+                        color: Colors.white70,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children:[
+                      Text("${ticket.endStation}", style: TextStyle(height:1.5,fontSize: 20)),
+                      Text("${formateEndTime1}", style: TextStyle(height:1.5,fontSize: 20)),
+                      Text("${formateEndTime2}", style: TextStyle(height:1.5,fontSize: 20)),
+                    ],
+                  ),
+                ],
+            ),
           ),
         ],
       ),
@@ -113,9 +172,37 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
     String date=response.data[0]['date'];
     String startStation= response.data[0]['start_station'].toString();
     String endStation= response.data[0]['end_station'].toString();
+    String startTime= response.data[0]['start_time'].toString();
+    String endTime= response.data[0]['end_time'].toString();
     String train=response.data[0]['train'].toString();
     String seat=response.data[0]['seat'];
     String urlQR= response.data[0]['QR_url'];
+    try {
+      response = await Dio().get(
+        'https://tra-helper-backend.herokuapp.com/stations/${startStation}/',
+      );
+
+    } on DioError {
+      Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+      setState(() {
+        isLoading = false; // 只要有變數改變就要用setstate包起來，UI就會更新了
+      });
+      return;
+    }
+    startStation = response.data['station_name'];
+    try {
+      response = await Dio().get(
+        'https://tra-helper-backend.herokuapp.com/stations/${endStation}/',
+      );
+
+    } on DioError {
+      Widgets.dialog(context, '無法連線', 'App無法連線至伺服器，請檢查您的網路連線');
+      setState(() {
+        isLoading = false; // 只要有變數改變就要用setstate包起來，UI就會更新了
+      });
+      return;
+    }
+    endStation = response.data['station_name'];
     // 建立ticket物件
     setState(() {
       if(url==null){
@@ -129,6 +216,8 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
             date:date,
             startStation: startStation,
             endStation: endStation,
+            startTime: startTime,
+            endTime: endTime,
             train: train,
             seat: seat,
             urlQR: urlQR
