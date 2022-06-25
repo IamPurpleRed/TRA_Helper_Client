@@ -251,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
     String key = response.data['key'];
     try {
       response = await Dio().get(
-        'https://tra-helper-backend.herokuapp.com/accounts/$id/',
+        'https://tra-helper-backend.herokuapp.com/accounts/$id',
         options: Options(headers: {'Authorization': 'Token $key'}),
       );
     } on DioError {

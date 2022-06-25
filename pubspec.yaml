@@ -21,6 +21,9 @@ dependencies:
   provider: ^6.0.2 # 狀態管理
   shared_preferences: ^2.0.15 # 儲存資料在本地
   flutter_tts: ^3.4.0 # 文字轉語音
+  qr_flutter: ^4.0.0 # qrcode
+  loading_animation_widget: ^1.2.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
