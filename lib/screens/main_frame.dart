@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '/config/palette.dart';
+import '/config/user.dart';
 import '/screens/home_page.dart';
-import 'book_ticket_page.dart';
+import '/screens/book_ticket_page.dart';
 import '/screens/my_tickets_page.dart';
 import '/screens/explore_page.dart';
-
-const bool loginStatus = true; // 暫時變數，有登入即為true
 
 class MainFrame extends StatefulWidget {
   MainFrame({Key? key}) : super(key: key);
@@ -35,74 +35,73 @@ class MainFrame extends StatefulWidget {
 }
 
 class _MainFrameState extends State<MainFrame> {
-  int currentPageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final double vw = MediaQuery.of(context).size.width;
     final double vh = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Palette.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Palette.primaryColor,
-        title: Text(MainFrame._pageTitles[currentPageIndex]),
-        centerTitle: true,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.all(12),
-            child: Center(
-              child: Icon(Icons.account_circle),
-            ),
-          ),
-        ],
-      ),
-      body: widget._pages[currentPageIndex],
-      floatingActionButton: SizedBox(
-        width: vw * 0.18,
-        height: vh * 0.18,
-        child: FloatingActionButton(
-          child: const Icon(Icons.notifications_active, size: 48),
-          onPressed: () {},
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 10,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: vw * 0.4,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    bottomAppBarItem(vw, 0, '首頁'),
-                    bottomAppBarItem(vw, 1, MainFrame._pageTitles[1]),
-                  ],
+    return Consumer<User>(
+        builder: (context, user, child) => Scaffold(
+              backgroundColor: Palette.backgroundColor,
+              appBar: AppBar(
+                backgroundColor: Palette.primaryColor,
+                title: Text(MainFrame._pageTitles[user.currentPageIndex!]),
+                centerTitle: true,
+                actions: const [
+                  Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Center(
+                      child: Icon(Icons.account_circle),
+                    ),
+                  ),
+                ],
+              ),
+              body: widget._pages[user.currentPageIndex!],
+              floatingActionButton: SizedBox(
+                width: vw * 0.18,
+                height: vh * 0.18,
+                child: FloatingActionButton(
+                  child: const Icon(Icons.notifications_active, size: 48),
+                  onPressed: () {},
                 ),
               ),
-              SizedBox(
-                width: vw * 0.4,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    bottomAppBarItem(vw, 2, MainFrame._pageTitles[2]),
-                    bottomAppBarItem(vw, 3, MainFrame._pageTitles[3]),
-                  ],
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              bottomNavigationBar: BottomAppBar(
+                shape: const CircularNotchedRectangle(),
+                notchMargin: 10,
+                child: SizedBox(
+                  height: 60,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: vw * 0.4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            bottomAppBarItem(user, vw, 0, '首頁'),
+                            bottomAppBarItem(user, vw, 1, MainFrame._pageTitles[1]),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: vw * 0.4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            bottomAppBarItem(user, vw, 2, MainFrame._pageTitles[2]),
+                            bottomAppBarItem(user, vw, 3, MainFrame._pageTitles[3]),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ));
   }
 
-  SizedBox bottomAppBarItem(double vw, int index, String text) {
+  SizedBox bottomAppBarItem(User user, double vw, int index, String text) {
     return SizedBox(
       width: vw * 0.15,
       child: InkWell(
@@ -112,19 +111,21 @@ class _MainFrameState extends State<MainFrame> {
           children: [
             Icon(
               MainFrame._pageIcons[index],
-              color: (currentPageIndex == index) ? Palette.secondaryColor : Colors.white,
+              color: (user.currentPageIndex! == index) ? Palette.secondaryColor : Colors.white,
             ),
             Text(
               text,
               style: TextStyle(
-                color: (currentPageIndex == index) ? Palette.secondaryColor : Colors.white,
+                color: (user.currentPageIndex! == index) ? Palette.secondaryColor : Colors.white,
                 fontSize: 12,
               ),
             ),
           ],
         ),
         onTap: () {
-          setState(() => currentPageIndex = index);
+          setState(() {
+            Provider.of<User>(context, listen: false).currentPageIndex = index;
+          });
         },
       ),
     );

@@ -260,6 +260,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     Provider.of<User>(context, listen: false).loginOrUpdate(
+      currentPageIndex: 0,
       id: id,
       account: response.data['identity_number'],
       key: key,

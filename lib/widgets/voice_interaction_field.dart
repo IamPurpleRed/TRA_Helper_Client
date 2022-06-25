@@ -145,7 +145,9 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
                   ),
                   TextButton(
                     child: Text('${params[0]}車次：${params[2]}上車，${params[4]}抵達'),
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {});
+                    },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 15.0,

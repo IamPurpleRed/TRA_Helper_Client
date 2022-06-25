@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class User extends ChangeNotifier {
+  int? currentPageIndex;
   String? id;
   String? account;
   String? key;
@@ -10,15 +11,19 @@ class User extends ChangeNotifier {
   String? phone;
 
   User();
-  User.iHaveData({required String this.id, required String this.account, required String this.key, required String this.lastname, required String this.firstname, required String this.phone});
-
-  /* INFO: 測試用函式 */
-  void output() {
-    print((id ?? 'id is null') + '\n' + (account ?? 'account is null') + '\n' + (key ?? 'key is null') + '\n' + (lastname ?? 'lastname is null') + '\n' + (firstname ?? 'firstname is null') + '\n' + (phone ?? 'phone is null') + '\n');
-  }
+  User.iHaveData({required int this.currentPageIndex, required String this.id, required String this.account, required String this.key, required String this.lastname, required String this.firstname, required String this.phone});
 
   /* INFO: 當資料要更新時要執行的函式 */
-  Future<void> loginOrUpdate({required String id, required String account, required String key, required String lastname, required String firstname, required String phone}) async {
+  Future<void> loginOrUpdate({
+    int? currentPageIndex,
+    required String id,
+    required String account,
+    required String key,
+    required String lastname,
+    required String firstname,
+    required String phone,
+  }) async {
+    if (currentPageIndex != null) this.currentPageIndex = currentPageIndex;
     this.id = id;
     this.account = account;
     this.key = key;
@@ -38,6 +43,7 @@ class User extends ChangeNotifier {
 
   /* INFO: 當使用者登出時要執行的函式 */
   void logout() {
+    currentPageIndex = null;
     id = null;
     account = null;
     key = null;

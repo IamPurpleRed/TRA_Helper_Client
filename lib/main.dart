@@ -22,6 +22,7 @@ void main() async {
     ChangeNotifierProvider(
       create: (context) => isLogin
           ? User.iHaveData(
+              currentPageIndex: 0,
               id: prefs.getString('id')!,
               account: prefs.getString('account')!,
               key: prefs.getString('key')!,
