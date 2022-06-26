@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '/config/user.dart';
 import '/config/ticket.dart';
 import '/widgets/components.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:intl/intl.dart';
+import '/widgets/loading_block.dart';
 
 class MyTicketsPage extends StatefulWidget {
   const MyTicketsPage({Key? key}) : super(key: key);
@@ -21,34 +21,25 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
   Ticket? ticket; // 若為空顯示無車票畫面，不為空顯示車票qrcode等資訊
 
   @override
+  void initState() {
+    super.initState();
+    checkTicket(Provider.of<User>(context, listen: false));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double vw = MediaQuery.of(context).size.width;
     final double vh = MediaQuery.of(context).size.height;
 
-    return Consumer<User>(
-      builder: (context, user, child) {
-        if (isLoading) {
-          checkTicket(user);
-          return loadingUI();
-        } else {
-          if (ticket == null) {
-            return noTicketUI();
-          } else {
-            return hasTicketUI(vw, vh, ticket!);
-          }
-        }
-      },
-    );
-  }
-
-  /* INFO: 載入畫面 */
-  Widget loadingUI() {
-    return Center(
-      child: LoadingAnimationWidget.inkDrop(
-        color: Colors.white70,
-        size: 100,
-      ),
-    );
+    if (isLoading) {
+      return const LoadingBlock();
+    } else {
+      if (ticket == null) {
+        return noTicketUI();
+      } else {
+        return hasTicketUI(vw, vh, ticket!);
+      }
+    }
   }
 
   /* INFO: 無車票畫面 */

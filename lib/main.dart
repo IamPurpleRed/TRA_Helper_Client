@@ -45,7 +45,7 @@ class TraHelperApp extends StatelessWidget {
     return Consumer<User>(
       builder: (context, user, child) => MaterialApp(
         title: '台鐵幫幫盲',
-        debugShowCheckedModeBanner: true,
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           brightness: Brightness.dark,
           iconTheme: const IconThemeData(

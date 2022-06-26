@@ -68,7 +68,9 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
                     ),
                     TextButton(
                       child: const Text('訂票'),
-                      onPressed: () {},
+                      onPressed: () {
+                        Components.dialog(context, '訂票成功', '已經成功幫您訂購一張${widget.trainNoController.text}次列車的車票');
+                      },
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 15.0,
