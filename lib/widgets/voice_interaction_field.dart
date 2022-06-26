@@ -148,11 +148,10 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
                   TextButton(
                     child: Text('${params[0]}車次：${params[2]}上車，${params[4]}抵達'),
                     onPressed: () {
-                      setState(() {
-                        Provider.of<User>(context, listen: false).bookTicketParams = [params[0], params[1], params[3]];
-                        Provider.of<User>(context, listen: false).currentPageIndex = 1;
-                        print(Provider.of<User>(context, listen: false).bookTicketParams);
-                      });
+                      tts.stop();
+                      Provider.of<User>(context, listen: false).bookTicketParams = [params[0], params[1], params[3]];
+                      Provider.of<User>(context, listen: false).currentPageIndex = 1;
+                      Provider.of<User>(context, listen: false).notifyListeners();
                     },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

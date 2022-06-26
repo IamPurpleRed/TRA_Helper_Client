@@ -24,10 +24,10 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
     if (Provider.of<User>(context, listen: false).bookTicketParams != null) {
       List<String> params = Provider.of<User>(context, listen: false).bookTicketParams!;
       print(params);
-      widget.trainNoController.text = params[1];
-      widget.fromStationController.text = params[2];
+      widget.trainNoController.text = params[0];
+      widget.fromStationController.text = params[1];
       widget.toStationController.text = params[2];
-      Provider.of<User>(context, listen: false).bookTicketParams = null;
+      //Provider.of<User>(context, listen: false).bookTicketParams = null;
     }
   }
 
@@ -52,13 +52,13 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
                 prefixIcon: const Icon(Icons.directions),
                 fieldName: '起點',
                 keyboardType: TextInputType.text,
-                controller: widget.trainNoController,
+                controller: widget.fromStationController,
               ),
               Components.textfield(
                 prefixIcon: const Icon(Icons.sports_score),
                 fieldName: '目的地',
                 keyboardType: TextInputType.text,
-                controller: widget.trainNoController,
+                controller: widget.toStationController,
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(5.0),
