@@ -9,10 +9,18 @@ class User extends ChangeNotifier {
   String? lastname;
   String? firstname;
   String? phone;
-  List<String>? bookTicketParams; // 使用者點擊語音互動結果的列車按鈕
+  List<String>? bookTicketParams; // 使用者點擊語音互動結果的列車資訊按鈕
 
   User();
-  User.iHaveData({required int this.currentPageIndex, required String this.id, required String this.account, required String this.key, required String this.lastname, required String this.firstname, required String this.phone});
+  User.iHaveData({
+    required int this.currentPageIndex,
+    required String this.id,
+    required String this.account,
+    required String this.key,
+    required String this.lastname,
+    required String this.firstname,
+    required String this.phone,
+  });
 
   /* INFO: 當資料要更新時要執行的函式 */
   Future<void> loginOrUpdate({

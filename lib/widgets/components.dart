@@ -61,4 +61,26 @@ class Components {
 
     showDialog(context: context, builder: (BuildContext context) => dialog);
   }
+
+  /* INFO: 載入中方塊 */
+  static Widget loadingBlock(double vw) {
+    return Container(
+      width: vw * 0.7,
+      height: vw * 0.7,
+      child: Column(
+        children: const [
+          // FadeInImage(
+          //   width: vw * 0.4,
+          //   height: vw * 0.4,
+          //   image: Image.asset('assets/logo_white.png'),
+          // ),
+          Text('載入中...'),
+        ],
+      ),
+      decoration: BoxDecoration(
+        color: Palette.primaryColor,
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+    );
+  }
 }

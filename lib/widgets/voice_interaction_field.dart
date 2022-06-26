@@ -138,31 +138,27 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
         children.add(
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: vw * 0.75),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5.0),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(color: Palette.primaryColor),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Palette.primaryColor,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: TextButton(
+                child: Text('${params[0]}車次：${params[2]}上車，${params[4]}抵達'),
+                onPressed: () {
+                  tts.stop();
+                  Provider.of<User>(context, listen: false).bookTicketParams = [params[0], params[1], params[3]];
+                  Provider.of<User>(context, listen: false).currentPageIndex = 1;
+                  Provider.of<User>(context, listen: false).notifyListeners();
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0,
+                    vertical: 8.0,
                   ),
-                  TextButton(
-                    child: Text('${params[0]}車次：${params[2]}上車，${params[4]}抵達'),
-                    onPressed: () {
-                      tts.stop();
-                      Provider.of<User>(context, listen: false).bookTicketParams = [params[0], params[1], params[3]];
-                      Provider.of<User>(context, listen: false).currentPageIndex = 1;
-                      Provider.of<User>(context, listen: false).notifyListeners();
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0,
-                        vertical: 8.0,
-                      ),
-                      primary: Colors.white,
-                      textStyle: const TextStyle(fontSize: Constants.contentTextSize),
-                    ),
-                  ),
-                ],
+                  primary: Colors.white,
+                  textStyle: const TextStyle(fontSize: Constants.contentTextSize),
+                ),
               ),
             ),
           ),

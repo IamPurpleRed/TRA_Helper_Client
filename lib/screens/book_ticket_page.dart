@@ -23,11 +23,10 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
     super.initState();
     if (Provider.of<User>(context, listen: false).bookTicketParams != null) {
       List<String> params = Provider.of<User>(context, listen: false).bookTicketParams!;
-      print(params);
       widget.trainNoController.text = params[0];
       widget.fromStationController.text = params[1];
       widget.toStationController.text = params[2];
-      //Provider.of<User>(context, listen: false).bookTicketParams = null;
+      Provider.of<User>(context, listen: false).bookTicketParams = null;
     }
   }
 
