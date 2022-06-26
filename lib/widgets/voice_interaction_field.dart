@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:provider/provider.dart';
 
 import '/config/constants.dart';
 import '/config/palette.dart';
+import '/config/user.dart';
 
 class VoiceInterationField extends StatefulWidget {
   const VoiceInterationField({Key? key}) : super(key: key);
@@ -146,7 +148,11 @@ class VoiceInterationFieldState extends State<VoiceInterationField> {
                   TextButton(
                     child: Text('${params[0]}車次：${params[2]}上車，${params[4]}抵達'),
                     onPressed: () {
-                      setState(() {});
+                      setState(() {
+                        Provider.of<User>(context, listen: false).bookTicketParams = [params[0], params[1], params[3]];
+                        Provider.of<User>(context, listen: false).currentPageIndex = 1;
+                        print(Provider.of<User>(context, listen: false).bookTicketParams);
+                      });
                     },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class User extends ChangeNotifier {
-  int? currentPageIndex;
+  int? currentPageIndex; // 使用者當前所在頁面索引
   String? id;
   String? account;
   String? key;
   String? lastname;
   String? firstname;
   String? phone;
+  List<String>? bookTicketParams; // 使用者點擊語音互動結果的列車按鈕
 
   User();
   User.iHaveData({required int this.currentPageIndex, required String this.id, required String this.account, required String this.key, required String this.lastname, required String this.firstname, required String this.phone});
